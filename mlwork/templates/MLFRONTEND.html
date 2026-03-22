@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scheme Verification Portal</title>
+
+    <!-- Font Awesome (for icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lavender;
+            margin: 0;
+        }
+
+        .container {
+            width: 55%;
+            margin: 40px auto;
+            background-color: white;
+            padding: 20px;
+            border: 1px solid lightsteelblue;
+            border-top: 4px solid darkblue;
+        }
+
+        h2 {
+            color: darkblue;
+            margin-bottom: 15px;
+        }
+
+        .container h2:first-child {
+            color: darkred;
+        }
+
+        label {
+            font-weight: bold;
+            color: darkslategray;
+        }
+
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            margin-bottom: 12px;
+            border: 1px solid lightsteelblue;
+            background-color: whitesmoke;
+        }
+
+        input[type="text"]:focus,
+        input[type="file"]:focus {
+            outline: none;
+            border: 1px solid darkblue;
+            background-color: white;
+        }
+
+        button {
+            background-color: darkblue;
+            color: white;
+            padding: 10px;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: mediumblue;
+        }
+
+        button:active {
+            background-color: navy;
+        }
+
+        /* SPINNER */
+        .spinner-wrapper {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-top: 12px;
+            padding: 10px 14px;
+            background-color: lavender;
+            border-left: 3px solid darkblue;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid lightsteelblue;
+            border-top: 3px solid darkblue;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        .spinner-text {
+            font-size: 13px;
+            color: darkblue;
+            font-weight: 500;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* RESULT */
+        h3 {
+            color: darkblue;
+            margin-top: 14px;
+        }
+
+        p {
+            color: darkslategray;
+            line-height: 1.6;
+        }
+
+        .result-boxreal {
+            background-color: honeydew;
+            border-left: 4px solid darkgreen;
+            padding: 10px 14px;
+            margin-top: 12px;
+            color: darkgreen;
+        }
+
+        .result-boxfake {
+            background-color: mistyrose;
+            border-left: 4px solid darkred;
+            padding: 10px 14px;
+            margin-top: 12px;
+            color: darkred;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 10px;
+            color: gray;
+            font-size: 12px;
+        }
+
+        i {
+            margin-right: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        MALICIOUS FILES
+    </h2>
+
+    <!-- FILE UPLOAD FORM -->
+    <form action="/scam/" method="post" enctype="multipart/form-data" onsubmit="showSpinner('fileSpinnerWrapper', 'file')">
+        <label for="file"><strong>Upload a file (PDF/TXT ONLY):</strong></label><br>
+        <input type="file" name="file" id="file" required><br>
+        <button type="submit">
+            <i class="fa-solid fa-upload"></i> Analyze
+        </button>
+
+        <div id="fileSpinnerWrapper" class="spinner-wrapper">
+            <div class="spinner"></div>
+            <span class="spinner-text">Reading document...</span>
+        </div>
+    </form>
+
+    {% if message %}
+        <h3>DEKHO:</h3>
+        <p>{{ message }}</p>
+    {% endif %}
+
+    <h2>
+        <i class="fa-solid fa-link"></i>
+        Fake GVT URL Detector
+    </h2>
+
+    <!-- URL FORM -->
+    <form method="post" action="/predict" onsubmit="showSpinner('urlSpinnerWrapper', 'url')">
+        <label for="url">ENTER URL:</label>
+        <input type="text" name="url" id="url" required>
+        <button type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i> Classify
+        </button>
+
+        <div id="urlSpinnerWrapper" class="spinner-wrapper">
+            <div class="spinner"></div>
+            <span class="spinner-text">Analyzing URL...</span>
+        </div>
+    </form>
+
+    {% if input_url %}
+        <h3>URL Checked:</h3>
+        <p>{{ input_url }}</p>
+    {% endif %}
+
+    {% if predicted_class %}
+        <h3>DEKHO:</h3>
+        {% if 'FAKE' in predicted_class %}
+            <div class="result-boxfake">{{ predicted_class }}</div>
+        {% else %}
+            <div class="result-boxreal">{{ predicted_class }}</div>
+        {% endif %}
+    {% endif %}
+
+</div>
+
+<footer>
+    &copy; 2026 Scheme Verification Portal
+</footer>
+
+<script>
+    function showSpinner(wrapperId, inputId) {
+        const input = document.getElementById(inputId);
+        if (!input || !input.value) return;
+        document.getElementById(wrapperId).style.display = 'flex';
+    }
+</script>
+
+</body>
+</html>
